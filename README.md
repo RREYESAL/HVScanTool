@@ -24,17 +24,20 @@ Put the input files in the data directory.
 
 NOTE:  The blacklist.txt file have to be in the data directory. 
 
-5. The 7 main parameters. To create the 7 main plots in a special format you need the summary root files ("barrel" and "endcap") and run DrawingOUFlow.C. This macro create 7 png files from 7 TCanvas. Do root -l DrawingOUFlow.C and you get it. 
+5.The 7 main parameters. To create the 7 main plots in a special format you need the summary root files ("barrel" and "endcap") and run DrawingOUFlow.C. This macro create 7 png files from 7 TCanvas. Do root -l DrawingOUFlow.C and you get it. 
 
-6. The Workind Point (WP) per channel is computed from the set of rolls in the HV channel and it is defined as   
+6.The Workind Point (WP) per channel is computed from the set of rolls in the HV channel and it is defined as   
 
     if  (MAX(wp)_roll - MIN(wp)_roll)_ch < 100 V -> WP_ch = < WP_rolls >_ch 
+    
     else (MAX(wp)_roll - MIN(wp)_roll)_ch > 100 V -> WP_ch = (MIN(wp) + 100V)_ch 
 
+
 You can run the macro 'WPChannel.C' and compute de values of the WP per channel. To do you need two txt files named ChambersName_X.txt (X = Barrel or EndCap ) being in data directory. 
+
 ===================================================================================================================
 
-++ This tool could be improved adding classes performance. In particular add two classes, one to define the objects "rolls" with their data members HV, Efficiency, ClusterSize, NumExtrapol(Number of extrapolations), and other one a dictionary defining the objects "chamber" with the data members 'ChannelName', 'DipId', human_name (RE+4_R2_CH13_B for example) and logic_name (RE+4_R2_CH13_B = '637600102')   
+-- This tool could be improved adding classes performance. In particular add two classes, one to define the objects "rolls" with their data members HV, Efficiency, ClusterSize, NumExtrapol(Number of extrapolations), and other one a dictionary defining the objects "chamber" with the data members 'ChannelName', 'DipId', human_name (RE+4_R2_CH13_B for example) and logic_name (RE+4_R2_CH13_B = '637600102')   
 
 #Other studies 
  
