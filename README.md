@@ -24,8 +24,11 @@ Put the input files in the data directory.
 
 NOTE:  The blacklist.txt file have to be in the data directory. 
 
-5. The final step of the analysis is a summary with the 7 main parameters. To create the 7 main plots in a special format you need the summary root files ("barrel" and "endcap") and run DrawingOUFlow.C. This macro create 7 png files from 7 TCanvas. Do root -l DrawingOUFlow.C and you get it. 
+5. The 7 main parameters. To create the 7 main plots in a special format you need the summary root files ("barrel" and "endcap") and run DrawingOUFlow.C. This macro create 7 png files from 7 TCanvas. Do root -l DrawingOUFlow.C and you get it. 
 
+6. The HV channel is defined from a set of rolls as  
+
+    if  (MAX_roll - MIN_roll)_ch
 
 #Other studies 
  
