@@ -1,0 +1,21 @@
+The HV Scan Tool it is a series of codes that you can run depending on the output you need. 
+
+1. To start the analysis you need to get the input root files from: 
+
+eos ls /store/group/dpg_rpc/comm_rpc/Run-II/data2016/HVScan_May9/ForHVscanAna
+
+the name of files are: AnalyzeEfficiency_272818_RPCMon_p*.root 
+They are 12 in total, also you have to create a file a hvEffective.txt with the values of the Effective High Voltages in the taking data. The values must to be in kV  
+You can get more information in the twiki page: https://twiki.cern.ch/twiki/bin/view/CMS/RPCHvscan2016
+Put the input files in the data directory. 
+
+2. Once you have the input files in the data directory go to macro directory, the next step is run the FitData.C macro. This macro needs a input parameter depending on where you want 
+   to do the fit "barrel" or "endcap", for instance you can do in the prompt line $ root -l -q 'FitData.C("barrel")'. The output is the analysis of the data, this creates the results directory 
+   and 1 subdirectory per chamber in the RPC with the information of the fit results of the efficiency and the cluster size in two txt Files "fitData.txt" and "fitDataCls.txt". 
+   Basically the macro takes the root files, next it does two distributions, efficiency vs HV and clustersize vs HV, and then fit them using a Sigmoid function and a polynomial function 
+   respectively. 
+
+3. You can see the plots of the distributions and the fit running the pngProducer.C. This macro accept a input parameter "barrel" or "endcap" as well, you can do in the prompt line
+   for example $ root -l -b -q pngProducer.C("barrel")'. The macro create two png's per chamber the efficiency and the cluster size distributions with the respectively fits. 
+
+4.If you need get a summary of the fit results for all chambers, you can run the MakeASummary.C macro    
