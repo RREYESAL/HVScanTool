@@ -41,5 +41,9 @@ You can run the macro 'WPChannel.C' and compute de values of the WP per channel.
 
 #Other studies 
  
- 1. Probably you have to look at last years and compare them with the actual year. For this, there is a macro named compare_ages_granul.C  
+ 1. Compare the effciency in different ages. Probably you have to look at last years and compare them with the actual year. For this, there is a macro named compare_ages_granul.C. To run it you need two input summary root files barrel_summary_ageB.root and barrel_summary_ageA.root  in the summary directory. Just do root -l -q "compare_ages_granul.C(\"eraA\",\"eraB\",\"barrel\")" for example and you will get maps of the detector, those maps are filled with the means of the difference (eraB-eraA)[efficiency at wp]  in a different sector. (see a plot from DQM)
  
+ 2. Miniscan study. To get a properly definition of the WP probably you need the miniscan macro 'EffAtKneeDist.C' this macro draws the distribution of efficiency when the knee is changing (Knee + x[V] ), we will see 3 different distributions Barrel, EndCap, RE4. To run it do $root -l "EffAtKneeDist.C(false)"
+ 
+Probably you want to see the histograms of the efficiency every 5 points if you need those plots change the bool to 'true' and you get them. 
+
