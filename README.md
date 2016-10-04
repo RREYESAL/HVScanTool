@@ -6,7 +6,7 @@ The HV Scan Tool it is a series of codes that you can run depending on the outpu
 
 eos ls /store/group/dpg_rpc/comm_rpc/Run-II/data2016/HVScan_May9/ForHVscanAna
 
-the name of files are: AnalyzeEfficiency_272818_RPCMon_p*.root 
+the name of files are: AnalyzeEfficiency_272818_RPCMon_p\*.root 
 They are 12 in total, also you have to create a file a hvEffective.txt with the values of the Effective High Voltages in the taking data. The values must to be in kV  
 You can get more information in the twiki page: https://twiki.cern.ch/twiki/bin/view/CMS/RPCHvscan2016
 Put the input files in the data directory. 
