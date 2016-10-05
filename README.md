@@ -20,7 +20,7 @@ Put the input files in the data directory.
 3. You can see the plots of the distributions and the fit running the pngProducer.C. This macro accept a input parameter "barrel" or "endcap" as well, you can do in the prompt line
    for example $ root -l -b -q pngProducer.C("barrel")'. The macro create two png's per chamber the efficiency and the cluster size distributions with the respectively fits. 
 
-4. If you need to get a summary of the fit results for all chambers, you can run the MakeASummary.C macro   just do $ root -l 'MakeASummary.C("barrel", false)' for example,  and you will get a root file in the summary directory with all relevant parameters from the fit. The second bool is the "black-list" parameter, most probably you have to define a black list with problematic rolls in the run and create a txt file "blacklist.txt" with them, if that was the case and you define a black-list with the  help of the experts, and you need a summary only with the filtered rolls(no problematic rolls) so you can put 'true'. 
+4. If you need to get a summary of the fit results for all chambers, you can run the MakeASummary.C macro   just do $ root -l 'MakeASummary.C("barrel", false)',   and you will get a root file in the summary directory with all relevant parameters from the fit. The second bool is the "black-list" parameter, most probably you have to define a black list with problematic rolls in the run and create a txt file "blacklist.txt" with them, if that was the case and you define a black-list with the  help of the experts, and you need a summary only with the filtered rolls(no problematic rolls) so you can put 'true'. 
 
 NOTE:  The blacklist.txt file have to be in the data directory. 
 
@@ -39,11 +39,17 @@ You can run the macro 'WPChannel.C' and compute de values of the WP per channel.
 
 -- This tool could be improved adding classes performance. In particular add two classes, one to define the objects "rolls" with their data members HV, Efficiency, ClusterSize, NumExtrapol(Number of extrapolations), and other one a dictionary defining the objects "chamber" with the data members 'ChannelName', 'DipId', human_name (RE+4_R2_CH13_B for example) and logic_name (RE+4_R2_CH13_B = '637600102')   
 
+===================================================================================================================
 #Other studies 
  
- 1. Compare the effciency in different ages. Probably you have to look at last years and compare them with the actual year. For this, there is a macro named compare_ages_granul.C. To run it you need two input summary root files barrel_summary_ageB.root and barrel_summary_ageA.root  in the summary directory. Just do root -l -q "compare_ages_granul.C(\"eraA\",\"eraB\",\"barrel\")" for example and you will get maps of the detector, those maps are filled with the means of the difference (eraB-eraA)[efficiency at wp]  in a different sector. (see a plot from DQM)
+ 1. Compare the effciency in different ages. Probably you have to look at last years and compare them with the actual year. For this there is a macro named compare_ages_granul.C. To run it you need two input summary root files barrel_summary_ageB.root and barrel_summary_ageA.root  in the summary directory. 
+
+Do root -l -q "compare_ages_granul.C(\"eraA\",\"eraB\",\"barrel\")" and you will get maps of the detector, those maps are filled with the means of the difference (eraB-eraA)[efficiency at wp] for every different sector.
  
- 2. Miniscan study. To get a properly definition of the WP probably you need the miniscan macro 'EffAtKneeDist.C' this macro draws the distribution of efficiency when the knee is changing (Knee + x[V] ), we will see 3 different distributions Barrel, EndCap, RE4. To run it do $root -l "EffAtKneeDist.C(false)"
+ 2. Miniscan study. To get a properly definition of the WP probably you need the miniscan macro 'EffAtKneeDist.C' this macro draws the distribution of efficiency when the knee is changing (Knee + x[V] ), we will see 3 different distributions Barrel, EndCap, RE4. To run it  you need the summary root files for barrel and endcap and do $root -l "EffAtKneeDist.C(false)". 
  
 Probably you want to see the histograms of the efficiency every 5 points if you need those plots change the bool to 'true' and you get them. 
+
+3. History Plot. A history could be done using  the history.C macro, to run it you need the different summaries for all years (2011, 2012a, 2012b ,2016) and do root -l 'history.C("barrel")' or "endcap" and you get a plot of the means of the efficiency and the the wp for all years. 
+
 
