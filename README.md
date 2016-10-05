@@ -26,7 +26,7 @@ NOTE:  The blacklist.txt file have to be in the data directory.
 
 5.The 7 main parameters. To create the 7 main plots in a special format you need the summary root files ("barrel" and "endcap") and run DrawingOUFlow.C. This macro create 7 png files from 7 TCanvas. Do root -l DrawingOUFlow.C and you get it. 
 
-6.The Workind Point (WP) per channel is computed from the set of rolls in the HV channel and it is defined as   
+6.The Working Point (WP) per channel is computed from the set of rolls in the HV channel and it is defined as   
 
     if  (MAX(wp)_roll - MIN(wp)_roll)_ch < 100 V -> WP_ch = < WP_rolls >_ch 
     
@@ -50,6 +50,6 @@ Do root -l -q "compare_ages_granul.C(\"eraA\",\"eraB\",\"barrel\")" and you will
  
 Probably you want to see the histograms of the efficiency every 5 points if you need those plots change the bool to 'true' and you get them. 
 
-3. History Plot. A history could be done using  the history.C macro, to run it you need the different summaries for all years (2011, 2012a, 2012b ,2016) and do root -l 'history.C("barrel")' or "endcap" and you get a plot of the means of the efficiency and the the wp for all years. 
+3. History Plot. The history plot could be done using  the history.C macro, to run it you need the different summaries for all years (2011, 2012a, 2012b ,2016) and do root -l 'history.C("barrel")' or "endcap" and you get a plot of the means of the efficiency and the the wp for all years. 
 
 
