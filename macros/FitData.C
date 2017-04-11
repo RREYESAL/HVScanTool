@@ -326,7 +326,7 @@ Double_t FitDataFuncCls(const char* subdetect,const char* chamber, int points, f
 void FitData(const char *subdetect){
    
    std::ifstream RollEff;
-   //std::ofstream runsData;
+   std::ofstream runsData;
    std::vector< std::pair<Int_t,Float_t> > hvscan;
    hvscan = hvEff(subdetect);
    int run = int(hvscan.size());   
@@ -390,8 +390,8 @@ void FitData(const char *subdetect){
     FitDataFuncCls(subdetect,c,RUN, HV, HVerr,CLS, CLSerr, wp); 
     
     //%%%%%% Only if you want to save the data to each roll
-    /*
-    //gSystem->mkdir("results");
+    
+    gSystem->mkdir("../results");
     id_ =itmap->first;
     gSystem->mkdir(("../results/"+id_).c_str());
     runsData.open(("../results/"+id_+"/runsData.txt").c_str());          
@@ -403,8 +403,9 @@ void FitData(const char *subdetect){
              <<EXP[n]<< " "   
              <<CLS[n]<<std::endl;
              } 
-	//runsData.close();
-     //%%%%%%%%%%%%%%%%%%%%%%%%% */
+	runsData.close();
+     //%%%%%%%%%%%%%%%%%%%%%%%%% 
+
      
     }
   exit(0); 
