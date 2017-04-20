@@ -107,7 +107,7 @@ std::vector < std::pair<Int_t,Float_t> > hvEff(const char* subd){
 	while (1) {
 		f >> hv_b >> hv_ec;
 		if (f.eof()) break;
-		if (subd =="barrel")hv.push_back(hv_b);
+		if (strncmp(subd,"barrel",6)==0)hv.push_back(hv_b);
 		else hv.push_back(hv_ec);
 	}
 	f.close();
@@ -129,7 +129,7 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
   ifstream f;
   Double_t id;
   std::string name;
-  if (subd =="endcap")f.open("../data/detIdEndCap.txt");
+  if (strncmp(subd,"endcap",6)==0)f.open("../data/detIdEndCap.txt");
   else f.open("../data/detIdBarrel.txt");
   std::vector< std::pair<std::string,std::string> > dictionary_;
   while (1) {
@@ -157,8 +157,8 @@ void rData(const char *subdetect){
    hvscan = hvEff(subdetect);
    std::cout << hvscan.size();
    for (vector< std::pair<Int_t,Float_t> >::const_iterator it = hvscan.begin() ;it != hvscan.end(); it++  ){
-   	if (subdetect == "endcap")samples.push_back(-(it->first));
-   	else if (subdetect=="barrel")samples.push_back(it->first);
+   	if (strncmp(subdetect, "endcap",6)==0)samples.push_back(-(it->first));
+   	else if (strncmp(subdetect,"barrel",6)==0)samples.push_back(it->first);
    	else {std::cout << "put \"barrel\" or \"endcap\" only" << std::endl;exit(1);}
 	std::cout << subdetect <<" "<< it->first << " " << it->second << std::endl;
    } 
@@ -174,7 +174,7 @@ void rData(const char *subdetect){
    for (std::vector<int>::const_iterator Sample = samples.begin(); Sample != samples.end(); Sample++) {	
                 gROOT->Reset();
                 Int_t Run=0;
-                if (subdetect == "endcap")Run = -1*(*Sample);
+                if (strncmp(subdetect,"endcap",6)==0)Run = -1*(*Sample);
                 else Run=(*Sample);	
                 std::stringstream ss; std::string strun; ss << Run; 
                 strun = ss.str();  
@@ -213,7 +213,7 @@ void rData(const char *subdetect){
       	   	Int_t ientries = (Int_t)t->GetEntries();
                 std::cout << ientries << std::endl;
                 //Save  the data in a txt File 
-                if (subdetect == "endcap")RollEff.open(("../data/rollEff_"+strun+"_ec.txt").c_str());
+                if (strncmp(subdetect,"endcap",6)==0)RollEff.open(("../data/rollEff_"+strun+"_ec.txt").c_str());
                 else RollEff.open(("../data/rollEff_"+strun+"_b.txt").c_str());
                 for (Long64_t i=0; i<ientries; i++) {
  			t->GetEntry(i);
@@ -229,8 +229,8 @@ void rData(const char *subdetect){
    return; 
 }
 
-Double_t FitDataFuncEff(const char* subdetect,const char* chamber, int points, float *hv,float *hverr, float *eff, float *efferr){
- if (points ==0.) {std::cout << "N O  D A T A "; return;} 
+ Double_t FitDataFuncEff(const char* subdetect,const char* chamber, int points, float *hv,float *hverr, float *eff, float *efferr){
+ if (points ==0.) {std::cout << "N O  D A T A "; return 0;} 
  std::cout << subdetect <<":  "<< chamber << std::endl; 
 
  //Defining the fit function and setting parameters 
@@ -238,7 +238,7 @@ Double_t FitDataFuncEff(const char* subdetect,const char* chamber, int points, f
  f1->SetParNames("emax","slope","hv50");
  f1->SetParLimits(0, 0.0, 99.9999);//bound emax parameter 
  f1->SetParameter(0, 95.0);//setting at value eff 95%
- if (subdetect == "endcap"){
+ if (strncmp(subdetect,"endcap",6)==0){
       f1->SetParameter(1, -12);//Setting to achieve convergence 
       f1->SetParameter(2, 9.3);}
  else{
@@ -263,7 +263,7 @@ Double_t FitDataFuncEff(const char* subdetect,const char* chamber, int points, f
  }
  else; 
 
- if (subdetect == "endcap" )wp = knee +0.120;
+ if (strncmp(subdetect,"endcap",6)==0 )wp = knee +0.120;
  else wp = knee +0.100;
  effwp = Sigmoidcalc(wp,f1->GetParameter(0),f1->GetParameter(1),f1->GetParameter(2));
  slope50 = difcalc(f1->GetParameter(2),f1->GetParameter(0),f1->GetParameter(1),f1->GetParameter(2)); 
@@ -288,7 +288,7 @@ Double_t FitDataFuncEff(const char* subdetect,const char* chamber, int points, f
  return wp; 
 }
  
-Double_t FitDataFuncCls(const char* subdetect,const char* chamber, int points, float *hv,float *hverr, float *cls, float *clserr, Double_t wp){
+ void FitDataFuncCls(const char* subdetect,const char* chamber, int points, float *hv,float *hverr, float *cls, float *clserr, Double_t wp){
  gROOT->Reset();
  if (points ==0.) {std::cout << "N O  D A T A "; return;} 
  Double_t clswp=0.,clsknee=0, chi2cls=0.;  
@@ -296,14 +296,14 @@ Double_t FitDataFuncCls(const char* subdetect,const char* chamber, int points, f
  //
  TGraphErrors *hvcls = new TGraphErrors(points, hv, cls, hverr, clserr);
  // Defining the fit function and setting parameters  on the cls 
- TF1 *f2 = (TF1*) gROOT->GetFunction("cheb3");
+ TF1 *f2 = (TF1*) gROOT->GetFunction("chebyshev3");
  f2->SetParNames("a","b","c","d"); 
  //TF1 *f2 = new TF1("f2",PolyFuncFit, 8.5, 10.0 ,4);//Same model
  hvcls->Fit(f2,"","",8.5,9.999);
  clswp = PolyFunccalc(wp,f2->GetParameter(0),f2->GetParameter(1),f2->GetParameter(2),f2->GetParameter(3));
- if (subdetect == "endcap" )clsknee = PolyFunccalc(wp - 0.120,f2->GetParameter(0),f2->GetParameter(1),f2->GetParameter(2),f2->GetParameter(3));
+ if (strncmp(subdetect,"endcap",6)==0 )clsknee = PolyFunccalc(wp - 0.120,f2->GetParameter(0),f2->GetParameter(1),f2->GetParameter(2),f2->GetParameter(3));
  else clsknee = PolyFunccalc(wp - 0.100,f2->GetParameter(0),f2->GetParameter(1),f2->GetParameter(2),f2->GetParameter(3));
- chi2cls=(f2->GetChisquare())/(points);
+ chi2cls=(f2->GetChisquare())/(points-1);
  
  
  //S A V E   T H E   R E S U L T S   I N   A   T X T   F I L E  
@@ -315,7 +315,8 @@ Double_t FitDataFuncCls(const char* subdetect,const char* chamber, int points, f
           <<f2->GetParameter(2)<<" "
           <<f2->GetParameter(3)<<" "
           << chi2cls<<" "
-          <<wp<<" "<<clswp<<" "<<endl;
+          <<wp<<" "
+          <<clswp<<" "<<endl;
  fitResCls.close();
  return;
 }
@@ -355,13 +356,12 @@ void FitData(const char *subdetect){
    std::cout << map.size()<< std::endl;
    for (vector<std::pair<std::string,std::string> >::const_iterator itmap = map.begin() ;itmap != map.end(); itmap++  )
    {      
-         //std::cout << itmap->first << " " <<itmap->second << std::endl;;
          for (vector<std::pair<Int_t,Float_t> >::const_iterator it = hvscan.begin() ;it != hvscan.end(); it++  ){  
                run = int(it->first);
                std::stringstream s; 
                std::string strR;
                s << run; strR = s.str();
-               if (subdetect=="barrel") RollEff.open(("../data/rollEff_"+strR+"_b.txt").c_str());
+               if (strncmp(subdetect,"barrel",6)==0) RollEff.open(("../data/rollEff_"+strR+"_b.txt").c_str());
                else  RollEff.open(("../data/rollEff_"+strR+"_ec.txt").c_str());
                while (1){
               		 RollEff >> id_ >> eff >> err >> exp >> cls;   
@@ -376,8 +376,8 @@ void FitData(const char *subdetect){
                 	 if(ERR[run-1]==0.) ERR[run-1]=100.;
                          if(EFF[run-1]==0.) EFF[run-1]=0.001;
                          if(EXP[run-1]==0.) EXP[run-1]=1.;
-                         //CLSerr[run-1] = 1/sqrt((EXP[run-1])*(EFF[run-1]/100));; 
-                         CLSerr[run-1] = 0.3;//Force the error probably wrong 
+                         CLSerr[run-1] = 1/sqrt((EXP[run-1])*(EFF[run-1]/100));; 
+                         //CLSerr[run-1] = 0.3;//Force the error probably wrong 
                          }
                                   
             RollEff.close();
@@ -397,7 +397,7 @@ void FitData(const char *subdetect){
     runsData.open(("../results/"+id_+"/runsData.txt").c_str());          
     cout << id_ << " " << " create directory" <<endl;
     for (int n=0;n<RUN;n++){
-             std::cout <<HV[n] << " "
+             runsData <<HV[n] << " "
              <<EFF[n]<< " "    
              <<ERR[n]<< " "
              <<EXP[n]<< " "   

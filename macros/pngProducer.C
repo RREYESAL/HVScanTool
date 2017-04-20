@@ -89,7 +89,7 @@ std::vector < std::pair<Int_t,Float_t> > hvEff(const char* subd){
 	while (1) {
 		f >> hv_b >> hv_ec;
 		if (f.eof()) break;
-		if (subd =="barrel")hv.push_back(hv_b);
+		if (strncmp(subd,"barrel",6)==0)hv.push_back(hv_b);
 		else hv.push_back(hv_ec);
 	}
 	f.close();
@@ -111,7 +111,7 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
   ifstream f;
   Double_t id;
   std::string name;
-  if (subd =="endcap")f.open("../data/detIdEndCap.txt");
+  if (strncmp(subd,"endcap",6)==0)f.open("../data/detIdEndCap.txt");
   else f.open("../data/detIdBarrel.txt");
   std::vector< std::pair<std::string,std::string> > dictionary_;
   while (1) {
@@ -154,12 +154,12 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  TF1 *f1 = new TF1("f1",SigmoidFunc, 8.5, 9.9  ,3);//range of the function and how many parameters  
  f1->SetParNames("emax","slope","hv50");
  f1->SetParameter(0, fitparamEff[2]);
- f1->SetParameter(1, fitparamEff[3]);//
- f1->SetParameter(2, fitparamEff[9]);
+ f1->SetParameter(1, fitparamEff[9]);//
+ f1->SetParameter(2, fitparamEff[3]);
 
  Double_t knee;
  Double_t effknee;
- if (subdetect == "endcap" )knee = fitparamEff[0] - 0.120;  
+ if (strncmp(subdetect,"endcap",6)==0 )knee = fitparamEff[0] - 0.120;  
  else knee = fitparamEff[0] - 0.100;
  effknee=Sigmoidcalc(knee, fitparamEff[2],fitparamEff[9], fitparamEff[3]);
  hvc[0]=knee;
@@ -170,10 +170,11 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
 
  for (int k=0; k<P; k++){
       x[k]=xmin+k*(xmax-xmin)/(P-1);
-      y[k]=Sigmoidcalc(x[k],fitparamEff[2],fitparamEff[3],fitparamEff[9]);
-    }
- TGraph *sigmoid = new TGraph(P,x,y);//third graphic, the fit curve. 
+      y[k]=Sigmoidcalc(x[k],fitparamEff[2],fitparamEff[9],fitparamEff[3]);
+  }
  
+ TGraph *sigmoid = new TGraph(P,x,y);//third graphic, the fit curve. 
+  
 
  // Being made the fit on the efficiency vs HV distribution  
  TCanvas *c1 = new TCanvas(TString(canvasname1),"Sigmoid",200,10,600,400);
@@ -222,9 +223,9 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
 
  TGraphErrors *hvcls = new TGraphErrors(points, hv, cls, hverr, clserr);
  // Defining the fit function and setting parameters  on the cls 
- TF1 *f2 = (TF1*) gROOT->GetFunction("cheb3");
+ //TF1 *f2 = (TF1*) gROOT->GetFunction("cheb3");//root5
+ TF1 *f2 = (TF1*) gROOT->GetFunction("chebyshev3");//root6
  f2->SetParNames("a","b","c","d"); 
- //TF1 *f2 = new TF1("f2",PolyFuncFit, 8.5, 10.0 ,3);/Alternative model, Chebyshev are defined above. 
  
  f2->SetParameter(0, fitparamCls[0]);
  f2->SetParameter(1, fitparamCls[1]);
@@ -234,18 +235,18 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  
  Double_t knee;
  Double_t clsknee;
- if (subdetect == "endcap" )knee = fitparamCls[5] - 0.120;//set knee = wp - 0.120
+ if (strncmp(subdetect,"endcap",6)==0)knee = fitparamCls[5] - 0.120;//set knee = wp - 0.120
  else knee = fitparamCls[5] - 0.100; //set knee = wp - 0.1
- clsknee=PolyFunccalc(knee,fitparamCls[0],fitparamCls[1],fitparamCls[2], fitparamCls[4]);
+ clsknee=PolyFunccalc(knee,fitparamCls[0],fitparamCls[1],fitparamCls[2], fitparamCls[3]);
  hvc[0]=knee;
- hvc[1]=fitparamCls[0];//wp
- clsc[0]=clsknee;//eff at knee
- clsc[1]=fitparamCls[5];//effatwp 
- TGraph *hvpoints = new TGraph(2,hvc,clsc);
+ hvc[1]=fitparamCls[5];//wp
+ clsc[0]=clsknee;//cls at knee
+ clsc[1]=fitparamCls[6];//clsatwp 
+ TGraph *hvpointsCls = new TGraph(2,hvc,clsc);
  
  for (int k=0; k<P; k++){
 	 x[k]=xmin+k*(xmax-xmin)/(P-1);
-	 y[k]=PolyFunccalc(x[k],fitparamCls[0],fitparamCls[1],fitparamCls[2], fitparamCls[4]);
+	 y[k]=PolyFunccalc(x[k],fitparamCls[0],fitparamCls[1],fitparamCls[2], fitparamCls[3]);
 	}
  TGraph *poly = new TGraph(P,x,y);//third graphic, the fit curve.  
  
@@ -255,7 +256,7 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  hvcls->SetMarkerStyle(20);
  hvcls->SetMarkerSize(2.0);
  hvcls->SetMinimum(-0.01);
- hvcls->SetMaximum(110);
+ hvcls->SetMaximum(6);
  TAxis *axis = hvcls->GetXaxis();
  axis->SetLimits(8.5,9.9);
  hvcls->SetTitle(("Efficiency vs HV_Eff " + chamber_).c_str());
@@ -263,10 +264,10 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  hvcls->GetYaxis()->SetTitle("CLS"); 
  hvcls->Draw("AP");
  
- hvpoints->SetMarkerStyle(28);
- hvpoints->SetMarkerSize(3);
- hvpoints->SetLineColor(4);
- hvpoints->Draw("P");
+ hvpointsCls->SetMarkerStyle(28);
+ hvpointsCls->SetMarkerSize(3);
+ hvpointsCls->SetLineColor(4);
+ hvpointsCls->Draw("P");
    
  poly->SetLineColor(4);
  poly->SetLineWidth(3);
@@ -323,7 +324,8 @@ void pngProducer(const char* subdetect){
                std::stringstream s; 
                std::string strR;
                s << run; strR = s.str();
-               if (subdetect=="barrel") RollEff.open(("../data/rollEff_"+strR+"_b.txt").c_str());
+               if (strncmp(subdetect,"barrel",6)==0) RollEff.open(("../data/rollEff_"+strR+"_b.txt").c_str());
+               //if (subdetect=="barrel") RollEff.open(("../data/rollEff_"+strR+"_b.txt").c_str());
                else  RollEff.open(("../data/rollEff_"+strR+"_ec.txt").c_str());
                while (1){
               		 RollEff >> id_ >> eff >> err >> exp >> cls;   
@@ -338,8 +340,8 @@ void pngProducer(const char* subdetect){
                 	 if(ERR[run-1]==0.) ERR[run-1]=100.;
                          if(EFF[run-1]==0.) EFF[run-1]=0.001;
                          if(EXP[run-1]==0.) EXP[run-1]=1.;
-                         //CLSerr[run-1] = 1/sqrt((EXP[run-1])*(EFF[run-1]/100));; 
-                         CLSerr[run-1] = 0.3;//Force the error probably wrong 
+                         CLSerr[run-1] = 1/sqrt((EXP[run-1])*(EFF[run-1]/100));; 
+                         //CLSerr[run-1] = 0.3;//Force the error probably wrong 
                          }
           RollEff.close();
   
