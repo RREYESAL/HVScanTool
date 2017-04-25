@@ -376,7 +376,7 @@ void FitData(const char *subdetect){
                 	 if(ERR[run-1]==0.) ERR[run-1]=100.;
                          if(EFF[run-1]==0.) EFF[run-1]=0.001;
                          if(EXP[run-1]==0.) EXP[run-1]=1.;
-                         CLSerr[run-1] = 1/sqrt((EXP[run-1])*(EFF[run-1]/100));; 
+                         CLSerr[run-1] = 1/sqrt((EXP[run-1])*(EFF[run-1]/100)); 
                          //CLSerr[run-1] = 0.3;//Force the error probably wrong 
                          }
                                   
@@ -392,7 +392,6 @@ void FitData(const char *subdetect){
     //%%%%%% Only if you want to save the data to each roll
     
     gSystem->mkdir("../results");
-    id_ =itmap->first;
     gSystem->mkdir(("../results/"+id_).c_str());
     runsData.open(("../results/"+id_+"/runsData.txt").c_str());          
     cout << id_ << " " << " create directory" <<endl;
