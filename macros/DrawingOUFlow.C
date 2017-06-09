@@ -337,7 +337,7 @@ TCanvas* DrawOFUF(TH1F* HistB, TH1F* HistEC, TH1F* HistRE4, bool Norm, int Same,
 	Tex->Draw();
         Tex = new TLatex(HistB->GetXaxis()->GetBinCenter(HistB->GetMaximumBin()) , HistB->GetYaxis()->GetBinCenter(HistB->GetMaximumBin();),"Data 2017");
    	//Tex->SetLineWidth(2);
-   	Tex->SetTextFont(72);
+   	Tex->SetTextFont(92);
    	Tex->Draw(); 
        return canvas;        
 
