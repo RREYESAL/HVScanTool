@@ -155,12 +155,12 @@ void rData(const char *subdetect){
    std::vector<Int_t> samples; 
    std::vector< std::pair<Int_t,Float_t> > hvscan;
    hvscan = hvEff(subdetect);
-   std::cout << hvscan.size();
+   std::cout << "Number of points were taken: " <<hvscan.size() << std::endl;
    for (vector< std::pair<Int_t,Float_t> >::const_iterator it = hvscan.begin() ;it != hvscan.end(); it++  ){
    	if (strncmp(subdetect, "endcap",6)==0)samples.push_back(-(it->first));
    	else if (strncmp(subdetect,"barrel",6)==0)samples.push_back(it->first);
    	else {std::cout << "put \"barrel\" or \"endcap\" only" << std::endl;exit(1);}
-	std::cout << subdetect <<" "<< it->first << " " << it->second << std::endl;
+	std::cout << subdetect <<" High Voltage effective:  "<< it->first << " " << it->second << " [kV] "<<   std::endl;
    } 
   
    // G e t   t h e   D a t a
@@ -179,30 +179,28 @@ void rData(const char *subdetect){
                 std::stringstream ss; std::string strun; ss << Run; 
                 strun = ss.str();  
                 TChain *ch = new TChain("ch","");
-		if (*Sample == -1) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p86.root/effTreeEndcap");
- 		if (*Sample == -2) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p88.root/effTreeEndcap");
-  		if (*Sample == -3) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p90.root/effTreeEndcap");
-  		if (*Sample == -4) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p91.root/effTreeEndcap");
-  		if (*Sample == -5) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p92.root/effTreeEndcap");
-  		if (*Sample == -6) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p93.root/effTreeEndcap");
-  		if (*Sample == -7) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p94.root/effTreeEndcap");
-  		if (*Sample == -8) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p95.root/effTreeEndcap");
-  		if (*Sample == -9) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p96.root/effTreeEndcap");
-  		if (*Sample == -10) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p97.root/effTreeEndcap");
-  		if (*Sample == -11) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p98.root/effTreeEndcap");
-  		if (*Sample == -12) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p99.root/effTreeEndcap"); 	
-		if (*Sample == 1) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p86.root/effTreeBarrel");
- 		if (*Sample == 2) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p88.root/effTreeBarrel");
-  		if (*Sample == 3) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p90.root/effTreeBarrel");
-  		if (*Sample == 4) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p91.root/effTreeBarrel");
-  		if (*Sample == 5) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p92.root/effTreeBarrel");
-  		if (*Sample == 6) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p93.root/effTreeBarrel");
-  		if (*Sample == 7) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p94.root/effTreeBarrel");
-  		if (*Sample == 8) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p95.root/effTreeBarrel");
-  		if (*Sample == 9) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p96.root/effTreeBarrel");
-  		if (*Sample == 10) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p97.root/effTreeBarrel");
-  		if (*Sample == 11) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p98.root/effTreeBarrel");
-  		if (*Sample == 12) ch->Add("../data/AnalyzeEfficiency_272818_RPCMon_p99.root/effTreeBarrel"); 	
+		if (*Sample == -1) ch->Add("../data/AnalyzeEfficiency_HVscan_P88.root/effTreeEndcap");
+ 		if (*Sample == -2) ch->Add("../data/AnalyzeEfficiency_HVscan_P88.root/effTreeEndcap");
+  		if (*Sample == -3) ch->Add("../data/AnalyzeEfficiency_HVscan_P90.root/effTreeEndcap");
+  		if (*Sample == -4) ch->Add("../data/AnalyzeEfficiency_HVscan_P91.root/effTreeEndcap");
+  		if (*Sample == -5) ch->Add("../data/AnalyzeEfficiency_HVscan_P92.root/effTreeEndcap");
+  		if (*Sample == -6) ch->Add("../data/AnalyzeEfficiency_HVscan_P93.root/effTreeEndcap");
+  		if (*Sample == -7) ch->Add("../data/AnalyzeEfficiency_HVscan_P94.root/effTreeEndcap");
+  		if (*Sample == -8) ch->Add("../data/AnalyzeEfficiency_HVscan_P95.root/effTreeEndcap");
+  		if (*Sample == -9) ch->Add("../data/AnalyzeEfficiency_HVscan_P96.root/effTreeEndcap");
+  		if (*Sample == -10) ch->Add("../data/AnalyzeEfficiency_HVscan_P97.root/effTreeEndcap");
+  		if (*Sample == -11) ch->Add("../data/AnalyzeEfficiency_HVscan_P98.root/effTreeEndcap");
+		if (*Sample == 1) ch->Add("../data/AnalyzeEfficiency_HVscan_P86.root/effTreeBarrel");
+ 		if (*Sample == 2) ch->Add("../data/AnalyzeEfficiency_HVscan_P88.root/effTreeBarrel");
+  		if (*Sample == 3) ch->Add("../data/AnalyzeEfficiency_HVscan_P90.root/effTreeBarrel");
+  		if (*Sample == 4) ch->Add("../data/AnalyzeEfficiency_HVscan_P91.root/effTreeBarrel");
+  		if (*Sample == 5) ch->Add("../data/AnalyzeEfficiency_HVscan_P92.root/effTreeBarrel");
+  		if (*Sample == 6) ch->Add("../data/AnalyzeEfficiency_HVscan_P93.root/effTreeBarrel");
+  		if (*Sample == 7) ch->Add("../data/AnalyzeEfficiency_HVscan_P94.root/effTreeBarrel");
+  		if (*Sample == 8) ch->Add("../data/AnalyzeEfficiency_HVscan_P95.root/effTreeBarrel");
+  		if (*Sample == 9) ch->Add("../data/AnalyzeEfficiency_HVscan_P96.root/effTreeBarrel");
+  		if (*Sample == 10) ch->Add("../data/AnalyzeEfficiency_HVscan_P97.root/effTreeBarrel");
+  		if (*Sample == 11) ch->Add("../data/AnalyzeEfficiency_HVscan_P98.root/effTreeBarrel");
    		TTree *t = (TTree*)ch;
         	t->SetBranchAddress("detId",&detId);
 		t->SetBranchAddress("fiducialCutEff",&fiducialCutEff);
@@ -211,7 +209,7 @@ void rData(const char *subdetect){
 		t->SetBranchAddress("clustersize",&clustersize);
        
       	   	Int_t ientries = (Int_t)t->GetEntries();
-                std::cout << ientries << std::endl;
+                std::cout <<" number of chambers in the detector " << ientries << std::endl;
                 //Save  the data in a txt File 
                 if (strncmp(subdetect,"endcap",6)==0)RollEff.open(("../data/rollEff_"+strun+"_ec.txt").c_str());
                 else RollEff.open(("../data/rollEff_"+strun+"_b.txt").c_str());
@@ -296,12 +294,18 @@ void rData(const char *subdetect){
  //
  TGraphErrors *hvcls = new TGraphErrors(points, hv, cls, hverr, clserr);
  // Defining the fit function and setting parameters  on the cls 
- TF1 *f2 = (TF1*) gROOT->GetFunction("chebyshev3");
+ TF1 *f2 = (TF1*) gROOT->GetFunction("cheb3");
  f2->SetParNames("a","b","c","d"); 
+ f2->SetParLimits(0,-100,100);
+ f2->SetParLimits(1,-100,100);
+ f2->SetParLimits(2,-100,100);
+ f2->SetParLimits(3,-100,100);
+ f2->SetParameters(0.0,0.0,0.0,0.0); 
+ 
  //TF1 *f2 = new TF1("f2",PolyFuncFit, 8.5, 10.0 ,4);//Same model
- hvcls->Fit(f2,"","",8.5,9.999);
+ hvcls->Fit(f2,"RFN","",8.5,9.999);
  clswp = PolyFunccalc(wp,f2->GetParameter(0),f2->GetParameter(1),f2->GetParameter(2),f2->GetParameter(3));
- if (strncmp(subdetect,"endcap",6)==0 )clsknee = PolyFunccalc(wp - 0.120,f2->GetParameter(0),f2->GetParameter(1),f2->GetParameter(2),f2->GetParameter(3));
+ if (strncmp(subdetect,"endcap",1)==0 )clsknee = PolyFunccalc(wp - 0.120,f2->GetParameter(0),f2->GetParameter(1),f2->GetParameter(2),f2->GetParameter(3));
  else clsknee = PolyFunccalc(wp - 0.100,f2->GetParameter(0),f2->GetParameter(1),f2->GetParameter(2),f2->GetParameter(3));
  chi2cls=(f2->GetChisquare())/(points-1);
  
@@ -353,7 +357,7 @@ void FitData(const char *subdetect){
    //map -> first == name and map-> second ==id 
    std::vector< std::pair<std::string,std::string> > map;
    map = dictionary(subdetect);
-   std::cout << map.size()<< std::endl;
+   std::cout << map.size() << std::endl;
    for (vector<std::pair<std::string,std::string> >::const_iterator itmap = map.begin() ;itmap != map.end(); itmap++  )
    {      
          for (vector<std::pair<Int_t,Float_t> >::const_iterator it = hvscan.begin() ;it != hvscan.end(); it++  ){  

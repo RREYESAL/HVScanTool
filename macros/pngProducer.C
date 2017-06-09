@@ -200,7 +200,7 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  sigmoid->Draw("C");
  
  //S A V E   T H E   R E S U L T S   I N   A   P N G   F I L E  
- gSystem->mkdir(("../results/"+chamber_).c_str());
+ //gSystem->mkdir(("../results/"+chamber_).c_str());
  c1->SaveAs(("../results/"+chamber_+"/EFFvsHV.png").c_str());
  c1->Clear(); 
  return; 
@@ -223,8 +223,8 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
 
  TGraphErrors *hvcls = new TGraphErrors(points, hv, cls, hverr, clserr);
  // Defining the fit function and setting parameters  on the cls 
- //TF1 *f2 = (TF1*) gROOT->GetFunction("cheb3");//root5
- TF1 *f2 = (TF1*) gROOT->GetFunction("chebyshev3");//root6
+ TF1 *f2 = (TF1*) gROOT->GetFunction("cheb3");//root5
+ //TF1 *f2 = (TF1*) gROOT->GetFunction("chebyshev3");//root6
  f2->SetParNames("a","b","c","d"); 
  
  f2->SetParameter(0, fitparamCls[0]);
@@ -246,8 +246,9 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  
  for (int k=0; k<P; k++){
 	 x[k]=xmin+k*(xmax-xmin)/(P-1);
+          
 	 y[k]=PolyFunccalc(x[k],fitparamCls[0],fitparamCls[1],fitparamCls[2], fitparamCls[3]);
-	}
+   	}
  TGraph *poly = new TGraph(P,x,y);//third graphic, the fit curve.  
  
  // Being made the fit on the efficiency vs HV distribution  
@@ -259,9 +260,9 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  hvcls->SetMaximum(6);
  TAxis *axis = hvcls->GetXaxis();
  axis->SetLimits(8.5,9.9);
- hvcls->SetTitle(("Efficiency vs HV_Eff " + chamber_).c_str());
+ hvcls->SetTitle(("HV_Eff vs Cluster-Size" + chamber_).c_str());
  hvcls->GetXaxis()->SetTitle("HV_Eff(kV)");
- hvcls->GetYaxis()->SetTitle("CLS"); 
+ hvcls->GetYaxis()->SetTitle("Cluster Size"); 
  hvcls->Draw("AP");
  
  hvpointsCls->SetMarkerStyle(28);
@@ -274,7 +275,7 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  poly->Draw("C");
  
  //S A V E   T H E   R E S U L T S   I N   A   T X T   F I L E  
- gSystem->mkdir(("../results/"+chamber_).c_str());
+//gSystem->mkdir(("../results/"+chamber_).c_str());
  c2->SaveAs(("../results/"+chamber_+"/CLSvsHV.png").c_str());
  c2->Clear(); 
  return; 
@@ -377,7 +378,7 @@ void pngProducer(const char* subdetect){
 	  }
 	  fResCls.close();
 
-          DrawingEff(subdetect, c, RUN, HV, HVerr, EFF, ERR, FitResEff, (id_).c_str());
+ //         DrawingEff(subdetect, c, RUN, HV, HVerr, EFF, ERR, FitResEff, (id_).c_str());
 	  DrawingCls(subdetect, c, RUN, HV, HVerr, CLS, CLSerr, FitResCls, (id_).c_str());
     }
   exit(0); 
