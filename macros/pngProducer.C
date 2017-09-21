@@ -201,7 +201,8 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  
  //S A V E   T H E   R E S U L T S   I N   A   P N G   F I L E  
  //gSystem->mkdir(("../results/"+chamber_).c_str());
- c1->SaveAs(("../results/"+chamber_+"/EFFvsHV.png").c_str());
+ //c1->SaveAs(("../results/"+chamber_+"/EFFvsHV.png").c_str());
+ c1->SaveAs(("../results/"+id_+"_EFFvsHV.png").c_str());
  c1->Clear(); 
  return; 
 }
@@ -223,8 +224,8 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
 
  TGraphErrors *hvcls = new TGraphErrors(points, hv, cls, hverr, clserr);
  // Defining the fit function and setting parameters  on the cls 
- TF1 *f2 = (TF1*) gROOT->GetFunction("cheb3");//root5
- //TF1 *f2 = (TF1*) gROOT->GetFunction("chebyshev3");//root6
+ //TF1 *f2 = (TF1*) gROOT->GetFunction("cheb3");//root5
+ TF1 *f2 = (TF1*) gROOT->GetFunction("chebyshev3");//root6
  f2->SetParNames("a","b","c","d"); 
  
  f2->SetParameter(0, fitparamCls[0]);
@@ -276,7 +277,7 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
  
  //S A V E   T H E   R E S U L T S   I N   A   T X T   F I L E  
 //gSystem->mkdir(("../results/"+chamber_).c_str());
- c2->SaveAs(("../results/"+chamber_+"/CLSvsHV.png").c_str());
+ c2->SaveAs(("../results/"+id_+"_CLSvsHV.png").c_str());
  c2->Clear(); 
  return; 
 }
@@ -338,7 +339,7 @@ void pngProducer(const char* subdetect){
                 	 ERR[run-1]=err; 
                 	 EXP[run-1]=exp; 
                 	 CLS[run-1]=cls; 
-                	 if(ERR[run-1]==0.) ERR[run-1]=100.;
+                	 if(ERR[run-1]==0.) ERR[run-1]=0.00001;
                          if(EFF[run-1]==0.) EFF[run-1]=0.001;
                          if(EXP[run-1]==0.) EXP[run-1]=1.;
                          CLSerr[run-1] = 1/sqrt((EXP[run-1])*(EFF[run-1]/100));; 
@@ -378,7 +379,7 @@ void pngProducer(const char* subdetect){
 	  }
 	  fResCls.close();
 
- //         DrawingEff(subdetect, c, RUN, HV, HVerr, EFF, ERR, FitResEff, (id_).c_str());
+          DrawingEff(subdetect, c, RUN, HV, HVerr, EFF, ERR, FitResEff, (id_).c_str());
 	  DrawingCls(subdetect, c, RUN, HV, HVerr, CLS, CLSerr, FitResCls, (id_).c_str());
     }
   exit(0); 

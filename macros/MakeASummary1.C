@@ -48,10 +48,12 @@ std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
 }
 
 
-void MakeASummary(const char* subdetect, bool BL=false){
+void MakeASummary1(const char* subdetect, bool BL=false){
 
   std::ifstream fResEff, fResCls;
-  std::ofstream rollclean;
+  std::ofstream rollclean, rollremoved; 
+  std::ofstream rollData;
+  
   std::vector< std::pair<std::string,std::string> > map;
   map = dictionary(subdetect);
   std::cout << map.size()<< std::endl;
@@ -60,10 +62,10 @@ void MakeASummary(const char* subdetect, bool BL=false){
   vector<std::string> blacklistrollv;
   if (BL){
   std::string blacklistroll;
-  //double id;
+  double id;
   std::ifstream blacklist_file;
-  //blacklist_file.open("../data/blacklist.txt");
-  blacklist_file.open("../data/blacklist_v3.txt");
+  blacklist_file.open("../data/BlacklistExclusive_2016.txt");
+  //blacklist_file.open("../data/BlacklistInclusive_2016_2017.txt");
   while(blacklist_file.good()){
      blacklist_file >> blacklistroll;
     
@@ -78,19 +80,18 @@ void MakeASummary(const char* subdetect, bool BL=false){
   Double_t slope50, emax, hv50, chi2, EffWP, clsWP, chi2cls;
   Double_t emaxErr, slopeErr, hv50Err;
   Double_t slope;
+  Int_t nevents = 0;
    
-  TString outputFile;
-  if ( (strcmp(subdetect,"barrel")==0) && BL==true )outputFile  = "../summary/barrel_summary_2017BlackList.root";
-  else if ((strcmp(subdetect,"endcap")==0) && BL==true ) outputFile = "../summary/endcap_summary_2017BlackList.root";
-  else if ((strcmp(subdetect,"barrel")==0) && BL==false )outputFile  = "../summary/barrel_summary_2017.root";
-  else if ((strcmp(subdetect,"endcap")==0) && BL==false )outputFile  = "../summary/endcap_summary_2017.root";
+/*  TString outputFile;
+  if (strcmp(subdetect,"barrel" ) ==0 && BL==true )outputFile  = "/afs/cern.ch/work/r/rreyesal/public/RPC/HVScanSW/ComparisonAge/summary/barrel_summary_Inc2017BlackList.root";
+  else if (strcmp(subdetect,"endcap")==0 && BL==true ) outputFile = "/afs/cern.ch/work/r/rreyesal/public/RPC/HVScanSW/ComparisonAge/summary/endcap_summary_Inc2017BlackList.root";
+  else if (strcmp(subdetect,"barrel")==0 && BL==false )outputFile  = "/afs/cern.ch/work/r/rreyesal/public/RPC/HVScanSW/ComparisonAge/summary/barrel_summary_Inc2017.root";
+  else if (strcmp(subdetect,"endcap")==0 && BL==false )outputFile  = "/afs/cern.ch/work/r/rreyesal/public/RPC/HVScanSW/ComparisonAge/summary/endcap_summary_Inc2017.root";
   else{}; 
 
-  Int_t nevents = 0;
   TFile *file = new TFile(outputFile,"RECREATE");
   TTree *filtered = new TTree("filtered","summary");
-  TTree *removed; 
-  if (BL) removed = new TTree("removed","summary");
+  TTree *removed = new TTree("removed","summary");
     
 
   //To save the filtered 
@@ -124,16 +125,23 @@ void MakeASummary(const char* subdetect, bool BL=false){
   removed->Branch("slopeErr",&slopeErr,"slopeErr/D");
   removed->Branch("hv50Err",&hv50Err,"hv50Err/D");
   }else ; 
+*/
 
-
+  std::string name_;
   std::string id_;
   Double_t FitResEff[10];
   Double_t FitResCls[7];
  
-  if (BL)rollclean.open("../data/cleanedrolls.txt");
+  if (BL){
+	if (strcmp(subdetect,"barrel")==0)rollremoved.open("../summary/Exclusiveremoved_barrel_rolls_2017on2016.txt");
+	else {rollremoved.open("../summary/Exclusive_removed_endcap_rolls_2017on2016.txt");}
+	}
+  if (strcmp(subdetect,"barrel")==0)rollData.open("../summary/Exclusive_rollDataSummary_barrel_2017on2016.txt");
+  else rollData.open("../summary/Exclusive_rollDataSummary_endcap_2017on216.txt");
   for (vector<std::pair<std::string,std::string> >::const_iterator itmap = map.begin() ;itmap != map.end(); itmap++  ){
-  	 id_ =itmap->first;
-         fResEff.open(("../results/"+id_+"/fitData.txt").c_str());
+  	 name_ =itmap->first;
+  	 id_ =itmap->second;
+         fResEff.open(("../results/"+name_+"/fitData.txt").c_str());
          while (1){
           fResEff >>FitResEff[0]//wp
                   >>FitResEff[1]//slope50
@@ -148,7 +156,7 @@ void MakeASummary(const char* subdetect, bool BL=false){
                   if (fResEff.eof())break;
                   }
           fResEff.close();
-          fResCls.open(("../results/"+id_+"/fitDataCls.txt").c_str());
+          fResCls.open(("../results/"+name_+"/fitDataCls.txt").c_str());
           while (1){
           fResCls >>FitResCls[0]//a
                   >>FitResCls[1]//b
@@ -163,10 +171,10 @@ void MakeASummary(const char* subdetect, bool BL=false){
 
           if (BL){
 		  match=false;
-                  for (int i=0; i <int(blacklistrollv.size()); i++)if(id_ == blacklistrollv.at(i))match=true; 
+                  for (int i=0; i <int(blacklistrollv.size()); i++)if(name_ == blacklistrollv.at(i))match=true; 
 		  }
           if (match){
-		  strcpy(RollName, (itmap->first).c_str());
+		  strcpy(RollName, name_.c_str());
 		  WorkingPoint 	= FitResEff[0]; 
 		  slope50 	= FitResEff[1]; 
 		  emax 		= FitResEff[2]; 
@@ -179,12 +187,26 @@ void MakeASummary(const char* subdetect, bool BL=false){
 		  slope 	= FitResEff[9];
 		  clsWP 	= FitResCls[6];
 		  chi2cls	= FitResCls[4]; 
-		  removed->Fill();	
-		  }
+//		  removed->Fill();	
+		  rollremoved << RollName <<  " " 
+			 <<   id_         << " "  
+			 <<  FitResEff[0] << " "  
+ 			 <<  FitResEff[1] << " "  
+ 			 <<  FitResEff[2] << " "  
+			 <<  FitResEff[3] << " "  
+			 <<  FitResEff[4] << " "  
+			 <<  FitResEff[5] << " "  
+			 <<  FitResEff[6] << " "  
+			 <<  FitResEff[7] << " " 
+			 <<  FitResEff[8] << " " 
+			 <<  FitResEff[9] << " " 
+		  	 <<  FitResCls[6] << " " 
+			 <<  FitResCls[4] << std::endl; 
+  	}
 	  else {
 		  
 	          if (BL) rollclean << RollName << std::endl; 
-		  strcpy(RollName, (itmap->first).c_str());
+		  strcpy(RollName, name_.c_str());
 		  WorkingPoint 	= FitResEff[0]; 
 		  slope50 	= FitResEff[1]; 
 		  emax 		= FitResEff[2]; 
@@ -197,16 +219,32 @@ void MakeASummary(const char* subdetect, bool BL=false){
 		  slope 	= FitResEff[9];
 		  clsWP 	= FitResCls[6];
 		  chi2cls	= FitResCls[4]; 
-		  nevents++; 
-		  filtered->Fill();
+//		  filtered->Fill();
+                  
+	          rollData << RollName <<  " " 
+			 <<   id_         << " "  
+			 <<  FitResEff[0] << " "  
+ 			 <<  FitResEff[1] << " "  
+ 			 <<  FitResEff[2] << " "  
+			 <<  FitResEff[3] << " "  
+			 <<  FitResEff[4] << " "  
+			 <<  FitResEff[5] << " "  
+			 <<  FitResEff[6] << " "  
+			 <<  FitResEff[7] << " " 
+			 <<  FitResEff[8] << " " 
+			 <<  FitResEff[9] << " " 
+		  	 <<  FitResCls[6] << " " 
+			 <<  FitResCls[4] << std::endl; 
+			  nevents++; 
 		  } 
 	}
-        std::cout << "rolls->  " <<  nevents << std::endl; 
-	if (BL)rollclean.close();
-	filtered->Write("",TObject::kOverwrite);
-	if (BL)removed->Write("",TObject::kOverwrite);
-	file->Write("",TObject::kOverwrite);
-	file->Close();
+       std::cout << "rolls->  " <<  nevents << std::endl; 
+	if (BL)rollremoved.close();
+	rollData.close();
+//	filtered->Write("",TObject::kOverwrite);
+//	if (BL)removed->Write("",TObject::kOverwrite);
+//	file->Write("",TObject::kOverwrite);
+//	file->Close();
 }
 
 

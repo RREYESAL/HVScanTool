@@ -30,11 +30,11 @@ void Title(TH1F* ,const char* ,const char* ,const char* , float);
 void Format(TH1F* , int , int , int , int);
 void Legend2(float, float, float, float,const char*, TH1F*,const char*, TH1F*,const char*, float);
 void Legend3(float, float, float, float, const char*, TH1F*, const char*, TH1F*, const char*, TH1F*, const  char*, float);
-void DrawOFUF(TH1F*, TH1F*, TH1F*, bool, int, const char*, const char*, const char*);
+TCanvas* DrawOFUF(TH1F*, TH1F*, TH1F*, bool, int, const char*, const char*, const char*);
 
 using namespace std; 
 
-void DrawingOUFlow()
+void DrawingOUFlow(bool BL=false)
 {
   
   const int NUM = 9; 
@@ -112,25 +112,31 @@ void DrawingOUFlow()
   Double_t WorkingPoint;
   Double_t slope50, emax, hv50, chi2, EffWP, clsWP, chi2cls;
   TChain *ch = new TChain("ch","");
-  ch->Add("../summary/barrel_summary_2016.root/T");
-  ch->Add("../summary/endcap_summary_2016.root/T");
+  if (BL){
+	   ch->Add("../summary/barrel_summary_2017BlackList.root/filtered");
+	   ch->Add("../summary/endcap_summary_2017BlackList.root/filtered");
+  }
+  else {
+	  ch->Add("../summary/barrel_summary_2017.root/filtered");
+	  ch->Add("../summary/endcap_summary_2017.root/filtered");
+  }
 
-  TTree *T = (TTree*)ch;
+  TTree *filtered = (TTree*)ch;
 
-  cout<<" Entries : "<<T->GetEntries()<<endl;
-  Long64_t nentries = T->GetEntries();
-  T->SetBranchAddress("RollName", &RollName);
-  T->SetBranchAddress("WorkingPoint", &WorkingPoint);
-  T->SetBranchAddress("emax", &emax);
-  T->SetBranchAddress("hv50", &hv50);
-  T->SetBranchAddress("chi2", &chi2);
-  T->SetBranchAddress("slope50", &slope50);
-  T->SetBranchAddress("EffWP", &EffWP);
-  T->SetBranchAddress("clsWP", &clsWP);
-  T->SetBranchAddress("chi2cls", &chi2cls);
+  cout<<" Entries : "<<filtered->GetEntries()<<endl;
+  Long64_t nentries = filtered->GetEntries();
+  filtered->SetBranchAddress("RollName", &RollName);
+  filtered->SetBranchAddress("WorkingPoint", &WorkingPoint);
+  filtered->SetBranchAddress("emax", &emax);
+  filtered->SetBranchAddress("hv50", &hv50);
+  filtered->SetBranchAddress("chi2", &chi2);
+  filtered->SetBranchAddress("slope50", &slope50);
+  filtered->SetBranchAddress("EffWP", &EffWP);
+  filtered->SetBranchAddress("clsWP", &clsWP);
+  filtered->SetBranchAddress("chi2cls", &chi2cls);
 
  for(Long64_t i=0;i<nentries;i++){
-           T->GetEntry(i);
+           filtered->GetEntry(i);
            std::string chamber = RollName; 
            roll.push_back(RollName);
            wp.push_back(WorkingPoint);
@@ -204,7 +210,8 @@ void DrawingOUFlow()
                    HistosRE4[j], "RE4",
                    0.028);
         std::string pngname= TitlesPNG[j];
-        MyCanvas[j]->SaveAs("../summary/"+TString(pngname)+".png");
+        if (!BL) MyCanvas[j]->Print("../summary/"+TString(pngname)+".C");
+        else  MyCanvas[j]->Print("../summary/"+TString(pngname)+"_bl.C");
         MyCanvas[j]->Update();
         MyCanvas[j]->Modified(); 
             
@@ -234,11 +241,16 @@ void Format(TH1F* Hist, int LineWidth, int LineColor, int FillStyle, int FillCol
 
 void Legend3(float x1, float y1, float x2, float y2, const char* Header, TH1F* Entry1, const char* Desc1, TH1F* Entry2, const char* Desc2, TH1F* Entry3,const  char* Desc3, float TextSize)
 {
-	TLegend *Leg = new TLegend(x1, y1, x2, y2);
-	Leg->AddEntry(Entry1, Desc1, "lep");
-	Leg->AddEntry(Entry2, Desc2, "lep");	
-	Leg->AddEntry(Entry3, Desc3, "lep");
-	Leg->SetTextSize(TextSize);
+	TLegend *Leg; 
+        Leg = new TLegend(x1, y1, x2, y2);
+	Leg->AddEntry(Entry1, Desc1, "f");
+	Leg->AddEntry(Entry2, Desc2, "f");	
+	Leg->AddEntry(Entry3, Desc3, "f");
+	Leg->SetBorderSize(0); 
+        //Leg->SetLegendFillColor(0);
+	//Leg->SetLegendFont(42);
+	//Leg->SetLegendTextSize(0.);
+        Leg->SetTextSize(TextSize);
 	Leg->Draw();
 }
 
@@ -276,17 +288,15 @@ TCanvas* DrawOFUF(TH1F* HistB, TH1F* HistEC, TH1F* HistRE4, bool Norm, int Same,
 	HTmp1->SetEntries(HistB->GetEntries());
 	HTmp2->SetEntries(HistEC->GetEntries());
 	HTmp3->SetEntries(HistRE4->GetEntries());
+	  // Restore the Format 
+        Format(HTmp1, HistB->GetLineWidth(), HistB->GetLineColor(), HistB->GetFillStyle(), HistB->GetFillColor());
+	Format(HTmp2, HistEC->GetLineWidth(), HistEC->GetLineColor(), HistEC->GetFillStyle(), HistEC->GetFillColor());
+	Format(HTmp3, HistRE4->GetLineWidth(), HistRE4->GetLineColor(), HistRE4->GetFillStyle(), HistRE4->GetFillColor());
 
         THStack *hs = new THStack(nameS, title);
         
-	//Title(HTmp1, HistB->GetTitle(), HistB->GetXaxis()->GetTitle(), HistB->GetYaxis()->GetTitle(), HistB->GetYaxis()->GetTitleOffset());
-	Format(HTmp1, HistB->GetLineWidth(), HistB->GetLineColor(), HistB->GetFillStyle(), HistB->GetFillColor());
-        //Title(HTmp2, HistEC->GetTitle(), HistEC->GetXaxis()->GetTitle(), HistEC->GetYaxis()->GetTitle(), HistEC->GetYaxis()->GetTitleOffset());
-	Format(HTmp2, HistEC->GetLineWidth(), HistEC->GetLineColor(), HistEC->GetFillStyle(), HistEC->GetFillColor());
-        //Title(HTmp3, HistRE4->GetTitle(), HistRE4->GetXaxis()->GetTitle(), HistRE4->GetYaxis()->GetTitle(), HistRE4->GetYaxis()->GetTitleOffset());
-	Format(HTmp3, HistRE4->GetLineWidth(), HistRE4->GetLineColor(), HistRE4->GetFillStyle(), HistRE4->GetFillColor());
          
-       gROOT->ForceStyle();   
+       //gROOT->ForceStyle();   
 
        hs->Add(HTmp1,"sames");
        hs->Add(HTmp2,"sames");
@@ -295,19 +305,22 @@ TCanvas* DrawOFUF(TH1F* HistB, TH1F* HistEC, TH1F* HistRE4, bool Norm, int Same,
        gStyle->SetOptStat(1111);
        TCanvas *canvas = new TCanvas(nameCanvas," ", 1024, 768); 
         
-       hs->Draw("PMC nostack");
-       hs->GetYaxis()->SetTitle("Number of rolls");  
+       hs->Draw("hist nostack");
+       hs->GetYaxis()->SetTitle("Number of Rolls");  
        hs->GetXaxis()->SetTitle(title);  
        //canvas->Modified();
 //     //the following lines will force the stats for h[1] and h[2]
 //     //to be drawn at a different position to avoid overlaps
        canvas->Update(); //to for the generation of the 'stat" boxes
-       TPaveStats *st1; 
-                   st1 =  (TPaveStats*)HTmp1->GetListOfFunctions()->FindObject("stats");
-       TPaveStats *st2;
-                   st2 =  (TPaveStats*)HTmp2->GetListOfFunctions()->FindObject("stats");
-       TPaveStats *st3; 
-                   st3 =  (TPaveStats*)HTmp3->GetListOfFunctions()->FindObject("stats");
+       canvas->cd();
+       TLatex *dex = new TLatex(0.1, 0.92,"Data 2017");
+       dex->SetNDC();
+       dex->SetTextAngle(0);	//Tex->SetLineWidth(2);
+       dex->SetTextFont(92);
+       dex->Draw(); 
+       TPaveStats *st1 =  (TPaveStats*)HTmp1->GetListOfFunctions()->FindObject("stats");
+       TPaveStats *st2 =  (TPaveStats*)HTmp2->GetListOfFunctions()->FindObject("stats");
+       TPaveStats *st3 =  (TPaveStats*)HTmp3->GetListOfFunctions()->FindObject("stats");
 	st3->SetX1NDC(0.74);
 	st3->SetX2NDC(0.88);
 	st3->SetY1NDC(0.45);
@@ -335,10 +348,9 @@ TCanvas* DrawOFUF(TH1F* HistB, TH1F* HistEC, TH1F* HistRE4, bool Norm, int Same,
 	Tex->SetTextSize(0.03);
 	Tex->SetTextColor(1);
 	Tex->Draw();
-        Tex = new TLatex(HistB->GetXaxis()->GetBinCenter(HistB->GetMaximumBin()) , HistB->GetYaxis()->GetBinCenter(HistB->GetMaximumBin();),"Data 2017");
-   	//Tex->SetLineWidth(2);
-   	Tex->SetTextFont(92);
-   	Tex->Draw(); 
+        canvas->cd();
+        canvas->Update();
+        
        return canvas;        
 
 }

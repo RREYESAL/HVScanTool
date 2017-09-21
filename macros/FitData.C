@@ -236,6 +236,8 @@ void rData(const char *subdetect){
  f1->SetParNames("emax","slope","hv50");
  f1->SetParLimits(0, 0.0, 99.9999);//bound emax parameter 
  f1->SetParameter(0, 95.0);//setting at value eff 95%
+ f1->SetParLimits(2, 0.0, 97.999);//bound emax parameter 
+ f1->SetParameter(0, 0.00);//setting at value eff 95%
  if (strncmp(subdetect,"endcap",6)==0){
       f1->SetParameter(1, -12);//Setting to achieve convergence 
       f1->SetParameter(2, 9.3);}
@@ -245,24 +247,30 @@ void rData(const char *subdetect){
 
  // Being made the fit on the efficiency vs HV distribution  
  TGraphErrors *hveff = new TGraphErrors(points, hv, eff, hverr, efferr);
- hveff->Fit(f1);
+ hveff->Fit(f1,"RN");
  // Get the results of the Fit
- Double_t wp=0., effwp=0., effknee=0., knee=0., effkneemin=0., slope50=0.,slopeerr=0., hv50err=0., chi2=0.;
+ Double_t wp=0., effwp=0., effknee=0.0001, knee=0., effkneemin=0., slope50=0.,slopeerr=0., hv50err=0., chi2=0.;
  Double_t resolution=0.01;
  chi2=(f1->GetChisquare())/points; 
- knee=f1->GetParameter(2);//start at HV50  
+ 
+  knee=f1->GetParameter(2);//start at HV50  
+ 
  effkneemin = (f1->GetParameter(0))*0.95; //f1->GetParameter(0) = emax
  if ((f1->GetParameter(0)>0)&&(f1->GetParameter(1)<0)){
-    while (effknee<effkneemin){
+    while (effknee < effkneemin){
            knee=knee+resolution;
            // reaching  95% efficiency  
            effknee=Sigmoidcalc(knee,f1->GetParameter(0),f1->GetParameter(1),f1->GetParameter(2));
     }
  }
  else; 
-
- if (strncmp(subdetect,"endcap",6)==0 )wp = knee +0.120;
- else wp = knee +0.100;
+ 
+  
+ if ((f1->GetParameter(0))*100.0 < 0.0001  ) {knee = 0.0; wp = 0.00; }
+ else {
+ 	if (strncmp(subdetect,"endcap",6)==0 )wp = knee +0.120;
+ 	else wp = knee +0.100;
+	}
  effwp = Sigmoidcalc(wp,f1->GetParameter(0),f1->GetParameter(1),f1->GetParameter(2));
  slope50 = difcalc(f1->GetParameter(2),f1->GetParameter(0),f1->GetParameter(1),f1->GetParameter(2)); 
  
@@ -274,14 +282,14 @@ void rData(const char *subdetect){
  fitResEff.open(("../results/"+chamber_+"/fitData.txt").c_str());  
  fitResEff << wp <<" "
            <<slope50<<" "
-           <<f1->GetParameter(0)
-           <<" "<<f1->GetParameter(2)
-           <<" "<<chi2<<" "
-           <<effwp<<" "
-           <<f1->GetParError(0)<<" "
-           <<f1->GetParError(1)<<" "
-           <<f1->GetParError(2)<<" "
-           <<f1->GetParameter(1)<<endl;
+           <<f1->GetParameter(0)   /*emax*/
+           <<" "<<f1->GetParameter(2) /*hv50*/
+           <<" "<<chi2<<" "   /*chi2 eff*/
+           <<effwp<<" "       /*eff wp*/
+           <<f1->GetParError(0)<<" " /* emax err */
+           <<f1->GetParError(1)<<" "  /*slopeerr*/ 
+           <<f1->GetParError(2)<<" "  /*hv50 err*/
+           <<f1->GetParameter(1)<<endl;  /*slope*/
  fitResEff.close();
  return wp; 
 }
@@ -377,7 +385,7 @@ void FitData(const char *subdetect){
                 	 ERR[run-1]=err; 
                 	 EXP[run-1]=exp; 
                 	 CLS[run-1]=cls; 
-                	 if(ERR[run-1]==0.) ERR[run-1]=100.;
+                	 if(ERR[run-1]==0.) ERR[run-1]=0.00001;
                          if(EFF[run-1]==0.) EFF[run-1]=0.001;
                          if(EXP[run-1]==0.) EXP[run-1]=1.;
                          CLSerr[run-1] = 1/sqrt((EXP[run-1])*(EFF[run-1]/100)); 
