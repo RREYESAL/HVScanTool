@@ -19,71 +19,94 @@
 #include "TGraph.h"
 
 
+// F u n c t i o n   P r o t o t y p e   
+// 
+
+Double_t expFunc(Double_t*, Double_t*);//Function prototype 
+Double_t PolyFuncFit(Double_t*, Double_t*);//Function prototype 
+Double_t PolyFunccalc(Double_t, Double_t, Double_t , Double_t, Double_t );//Function prototype 
+Double_t expFunccalc(double, double, double);//Function prototype 
+Double_t SigmoidFunc( Double_t*, Double_t*);//Function prototype 
+Double_t Sigmoidcalc(Double_t,Double_t,Double_t,Double_t);//Function prototype 
+Double_t difcalc(Double_t, Double_t, Double_t, Double_t);//Function prototype 
+std::vector<std::string> blacklist(const char*);
 std::vector< std::pair<std::string,std::string> > dictionary(const char*);// function prototype
+std::vector< std::pair<std::string, double> > WPchannel(const char*, const char*);
 
 
+// ----- F U N C T I O N S  T O   B E   I M P L E M E N T E D   I N   T H E   F I T 
+// - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-// To do a map of the rolls. Every roll has an id match a name   
-std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
-  ifstream f;
-  Double_t id;
-  std::string name;
-  if (strcmp(subd,"endcap")==0)f.open("../data/detIdEndCap.txt");
-  else f.open("../data/detIdBarrel.txt");
-  std::vector< std::pair<std::string,std::string> > dictionary_;
-  while (1) {
-        f >> name
-          >> id;
-        if (f.eof()) break;
-        stringstream s; std::string stid;
-        s << UInt_t(id);
-        stid=s.str();
-        std::pair<std::string,std::string > pair_map;
-        pair_map.first = name ;
-        pair_map.second = stid;
-        dictionary_.push_back(pair_map);
-   }
-   f.close();
-   return dictionary_ ;
+Double_t expFunc(Double_t* _x, Double_t* _par){
+  return  TMath::Exp(_par[0]+_x[0]*_par[1]);
 }
+Double_t expFunccalc(double hv, double A, double B){
+   return TMath::Exp(A + hv*B);
+}
+Double_t PolyFuncFit(Double_t *hv, Double_t *par){
+   Double_t clsz = par[0] + par[1]*(hv[0]) + par[2]*((2*hv[0]*hv[0])-1) + par[3]*(4*(hv[0]*hv[0]*hv[0]) - 3*(hv[0]));
+   return clsz;
+}
+
+Double_t PolyFunccalc(Double_t wp, Double_t a, Double_t b, Double_t c, Double_t d){
+   Double_t clsz = a + b*(wp)+ c*((2*wp*wp)-1)+ d*(4*(wp*wp*wp)-3*wp) ;
+   return clsz;
+}
+
+Double_t SigmoidFunc( Double_t* _x, Double_t* _par ){
+  Double_t effmax = _par[0];
+  Double_t S = _par[1];
+  Double_t HV50 = _par[2];
+  return effmax / (1.0 + TMath::Exp( S *( _x[0] - HV50 ) ) );//
+}
+
+Double_t Sigmoidcalc(Double_t hv,Double_t emax,Double_t S,Double_t hv50 ){
+  return emax / (1.0 + TMath::Exp( S *( hv - hv50 ) ) );
+}
+
+Double_t difcalc(Double_t hv, Double_t emax, Double_t S, Double_t hv50){
+  return -emax*S*TMath::Exp(S*(hv-hv50))/((1.0 + TMath::Exp( S *( hv - hv50 ) ) )*(1.0 + TMath::Exp( S *( hv - hv50 ) ) )) ;
+}
+
+
+
+
+
+
 
 
 void MakeASummary(const char* subdetect, bool BL=false){
 
   std::ifstream fResEff, fResCls;
-  std::ofstream rollclean;
   std::vector< std::pair<std::string,std::string> > map;
+  vector<std::string> blacklistrollv;
+  std::vector< std::pair<std::string, double> > channel_map; 
+  bool match = false;
+
+
   map = dictionary(subdetect);
   std::cout << map.size()<< std::endl;
-   
-  bool match = false;
-  vector<std::string> blacklistrollv;
-  if (BL){
-  std::string blacklistroll;
-  //double id;
-  std::ifstream blacklist_file;
-  //blacklist_file.open("../data/blacklist.txt");
-  blacklist_file.open("../data/blacklist_v3.txt");
-  while(blacklist_file.good()){
-     blacklist_file >> blacklistroll;
-    
-    if (blacklist_file.eof())break; 
-     blacklistrollv.push_back(blacklistroll);
-     }
-  blacklist_file.close();
-  }
   
+  if( strcmp(subdetect,"endcap") == 0 )channel_map = WPchannel("endcap", "../data/EndcapChambersName_WP.txt") ; 
+  else  channel_map = WPchannel("barrel","../data/BarrelChambersName_WP.txt") ; 
+
+  if (BL) blacklistrollv = blacklist("../data/blacklist_2018.txt");
+ 
+ 
+
   Char_t   RollName[38];
+  Char_t   Id[10];
   Double_t WorkingPoint;
   Double_t slope50, emax, hv50, chi2, EffWP, clsWP, chi2cls;
   Double_t emaxErr, slopeErr, hv50Err;
   Double_t slope;
-   
+  Double_t WPch, EffWPch;  
+  
   TString outputFile;
-  if ( (strcmp(subdetect,"barrel")==0) && BL==true )outputFile  = "../summary/barrel_summary_2017BlackList.root";
-  else if ((strcmp(subdetect,"endcap")==0) && BL==true ) outputFile = "../summary/endcap_summary_2017BlackList.root";
-  else if ((strcmp(subdetect,"barrel")==0) && BL==false )outputFile  = "../summary/barrel_summary_2017.root";
-  else if ((strcmp(subdetect,"endcap")==0) && BL==false )outputFile  = "../summary/endcap_summary_2017.root";
+  if ( (strcmp(subdetect,"barrel")==0) && BL==true )outputFile  = "../summary/barrel_summary_2018BlackList.root";
+  else if ((strcmp(subdetect,"endcap")==0) && BL==true ) outputFile = "../summary/endcap_summary_2018BlackList.root";
+  else if ((strcmp(subdetect,"barrel")==0) && BL==false )outputFile  = "../summary/barrel_summary_2018.root";
+  else if ((strcmp(subdetect,"endcap")==0) && BL==false )outputFile  = "../summary/endcap_summary_2018.root";
   else{}; 
 
   Int_t nevents = 0;
@@ -95,6 +118,7 @@ void MakeASummary(const char* subdetect, bool BL=false){
 
   //To save the filtered 
   filtered->Branch("RollName",&RollName,"RollName/C");
+  filtered->Branch("Id",&Id,"Id/C");
   filtered->Branch("WorkingPoint",&WorkingPoint,"WorkingPoint/D");
   filtered->Branch("emax",&emax,"emax/D");
   filtered->Branch("slope",&slope,"slope/D");
@@ -103,6 +127,8 @@ void MakeASummary(const char* subdetect, bool BL=false){
   filtered->Branch("slope50",&slope50,"slope50/D");
   filtered->Branch("EffWP",&EffWP,"EffWP/D");
   filtered->Branch("clsWP",&clsWP,"clsWP/D");
+  filtered->Branch("WPch",&WPch,"WPch/D");
+  filtered->Branch("EffWPch",&EffWPch,"EffWPch/D");
   filtered->Branch("chi2cls",&chi2cls,"chi2cls/D");
   filtered->Branch("emaxErr",&emaxErr,"emaxErr/D");
   filtered->Branch("slopeErr",&slopeErr,"slopeErr/D");
@@ -111,6 +137,7 @@ void MakeASummary(const char* subdetect, bool BL=false){
    // Only if the Black list is applied, save only the blacklisted rolls 
   if (BL){
   removed->Branch("RollName",&RollName,"RollName/C");
+  removed->Branch("Id",&Id,"Id/C");
   removed->Branch("WorkingPoint",&WorkingPoint,"WorkingPoint/D");
   removed->Branch("emax",&emax,"emax/D");
   removed->Branch("slope",&slope,"slope/D");
@@ -119,6 +146,8 @@ void MakeASummary(const char* subdetect, bool BL=false){
   removed->Branch("slope50",&slope50,"slope50/D");
   removed->Branch("EffWP",&EffWP,"EffWP/D");
   removed->Branch("clsWP",&clsWP,"clsWP/D");
+  removed->Branch("WPch",&WPch,"WPch/D");
+  removed->Branch("EffWPch",&EffWPch,"EffWPch/D");
   removed->Branch("chi2cls",&chi2cls,"chi2cls/D");
   removed->Branch("emaxErr",&emaxErr,"emaxErr/D");
   removed->Branch("slopeErr",&slopeErr,"slopeErr/D");
@@ -129,9 +158,9 @@ void MakeASummary(const char* subdetect, bool BL=false){
   std::string id_;
   Double_t FitResEff[10];
   Double_t FitResCls[7];
- 
-  if (BL)rollclean.open("../data/cleanedrolls.txt");
-  for (vector<std::pair<std::string,std::string> >::const_iterator itmap = map.begin() ;itmap != map.end(); itmap++  ){
+  vector<std::pair<std::string, double> >::const_iterator itchannel;  
+  vector<std::pair<std::string,std::string> >::const_iterator itmap;  
+  for ( itmap = map.begin() ;itmap != map.end(); itmap++  ){
   	 id_ =itmap->first;
          fResEff.open(("../results/"+id_+"/fitData.txt").c_str());
          while (1){
@@ -160,49 +189,65 @@ void MakeASummary(const char* subdetect, bool BL=false){
                   if (fResEff.eof())break;
           }
           fResCls.close();
+	
+  	  /*TF1 *f1 = new TF1("f1",SigmoidFunc, 8.5, 9.9  ,3);//range of the function and how many parameters  
+ 	  f1->SetParNames("emax","slope","hv50");
+ 	  f1->SetParameter(0, FitResEff[2]);
+ 	  f1->SetParameter(1, FitResEff[9]);//
+ 	  f1->SetParameter(2, FitResEff[3]);
+	   */
 
           if (BL){
 		  match=false;
                   for (int i=0; i <int(blacklistrollv.size()); i++)if(id_ == blacklistrollv.at(i))match=true; 
 		  }
+          
+          strcpy(RollName, (itmap->first).c_str());
+          strcpy(Id, (itmap->second).c_str());
+	  WorkingPoint 	= FitResEff[0]; 
+          slope50 	= FitResEff[1]; 
+	  emax 		= FitResEff[2]; 
+	  hv50 		= FitResEff[3]; 
+	  chi2 		= FitResEff[4]; 
+	  EffWP 	= FitResEff[5]; 
+	  emaxErr 	= FitResEff[6]; 
+	  slopeErr 	= FitResEff[7];
+	  hv50Err 	= FitResEff[8];
+	  slope 	= FitResEff[9];
+	  clsWP 	= FitResCls[6];
+	  chi2cls	= FitResCls[4]; 
+          for (itchannel = channel_map.begin() ; itchannel != channel_map.end(); itchannel++ ){
+                 if(strcmp(subdetect,"barrel")==0 ){
+			if ( (itmap->first).find(itchannel->first) != std::string::npos){
+			WPch = ((itchannel->second)/1000.0);
+	  		EffWPch = Sigmoidcalc( WPch , emax, slope, hv50); 
+			std::cout << itchannel->first << "  " <<itmap->first << "  " << WPch << "  " << EffWPch << "  " <<  std::endl;
+			continue;   
+		   }else continue; //std::cout << itchannel->first << "  " <<itmap->first << endl;;   			
+	       }
+	        else {
+			std::string roll1 = (itchannel->first).substr(0,12);
+			std::string roll2 = (itchannel->first).substr(13,12);
+			//std::cout << roll2 << "  " << roll1 << endl;
+			if ( (itmap->first).find(roll1) != std::string::npos || (itmap->first).find(roll2) != std::string::npos ){
+			WPch = (itchannel->second/1000.0);
+	  		EffWPch = Sigmoidcalc( WPch ,FitResEff[2], FitResEff[9],FitResEff[3]); 
+			std::cout << itchannel->first << "  " <<itmap->first << "  " << WPch << "  " << EffWPch << "  " << std::endl; 
+			continue;   
+		   }else continue; //std::cout << itchannel->first << "  " <<itmap->first << endl;;   			
+	      }
+
+	  }
+		    
           if (match){
-		  strcpy(RollName, (itmap->first).c_str());
-		  WorkingPoint 	= FitResEff[0]; 
-		  slope50 	= FitResEff[1]; 
-		  emax 		= FitResEff[2]; 
-		  hv50 		= FitResEff[3]; 
-		  chi2 		= FitResEff[4]; 
-		  EffWP 	= FitResEff[5]; 
-		  emaxErr 	= FitResEff[6]; 
-		  slopeErr 	= FitResEff[7];
-		  hv50Err 	= FitResEff[8];
-		  slope 	= FitResEff[9];
-		  clsWP 	= FitResCls[6];
-		  chi2cls	= FitResCls[4]; 
 		  removed->Fill();	
 		  }
 	  else {
-		  
-	          if (BL) rollclean << RollName << std::endl; 
-		  strcpy(RollName, (itmap->first).c_str());
-		  WorkingPoint 	= FitResEff[0]; 
-		  slope50 	= FitResEff[1]; 
-		  emax 		= FitResEff[2]; 
-		  hv50 		= FitResEff[3]; 
-		  chi2 		= FitResEff[4]; 
-		  EffWP 	= FitResEff[5]; 
-		  emaxErr 	= FitResEff[6]; 
-		  slopeErr 	= FitResEff[7];
-		  hv50Err 	= FitResEff[8];
-		  slope 	= FitResEff[9];
-		  clsWP 	= FitResCls[6];
-		  chi2cls	= FitResCls[4]; 
 		  nevents++; 
 		  filtered->Fill();
 		  } 
 	}
         std::cout << "rolls->  " <<  nevents << std::endl; 
-	if (BL)rollclean.close();
 	filtered->Write("",TObject::kOverwrite);
 	if (BL)removed->Write("",TObject::kOverwrite);
 	file->Write("",TObject::kOverwrite);
@@ -210,5 +255,73 @@ void MakeASummary(const char* subdetect, bool BL=false){
 }
 
 
+std::vector<std::string> blacklist(const char* filename){
+  ifstream infile; 
+  
+  infile.open(filename); 
+  std::vector<std::string> rolls; 
+  while (1){
+   	std::string name; 
+   	infile >> name; 
+   	if (infile.eof())break;
+   	rolls.push_back(name); 
+   }   
+  
+  return rolls;   
+}
+// To do a map of the rolls. Every roll has an id match a name   
+std::vector< std::pair<std::string,std::string> > dictionary(const char* subd){
+  ifstream f;
+  Double_t id;
+  std::string name;
+  if (strcmp(subd,"endcap")==0)f.open("../data/detIdEndCap.txt");
+  else f.open("../data/detIdBarrel.txt");
+  std::vector< std::pair<std::string,std::string> > dictionary_;
+  while (1) {
+        f >> name
+          >> id;
+        if (f.eof()) break;
+        stringstream s; std::string stid;
+        s << UInt_t(id);
+        stid=s.str();
+        std::pair<std::string,std::string > pair_map;
+        pair_map.first = name ;
+        pair_map.second = stid;
+        dictionary_.push_back(pair_map);
+   }
+   f.close();
+   return dictionary_ ;
+}
 
+std::vector< std::pair<std::string, double> > WPchannel(const char* subd, const char* filename){
+
+ ifstream infile; 
+ std::pair<std::string, double > pair_map ; 
+ std::vector< std::pair<std::string, double> > WPchannel_ ; 
+ infile.open(filename); 
+ while(infile.good() ){
+ 	std::string  roll1, roll2; 
+	double HVvalues=0;      
+ 	if (strcmp(subd,"endcap")==0){ 
+	   infile >> roll1 >> roll2 >> HVvalues; 
+	   if (infile.eof()) break;
+	   pair_map.first = roll1+" "+roll2; 
+	   pair_map.second = HVvalues; 
+	   std::cout << pair_map.first << std::endl; 
+	  }	
+
+	else { 
+	   infile >> roll1  >> HVvalues; 
+	   if (infile.eof()) break;
+	   pair_map.first = roll1; 
+	   pair_map.second = HVvalues; 
+	}		
+	WPchannel_.push_back(pair_map);
+        	
+   }
+ infile.close();
+ 
+ return WPchannel_; 
+
+}
 
