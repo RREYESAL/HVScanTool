@@ -1,17 +1,44 @@
 ## Fill Run LumiSectionStart LumiSectionEnd File
-6768 317591 64  84  /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv8600_RPCMon.root
-6768 317591 87  107 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv8800_RPCMon.root
-6768 317591 120 140 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv8600_RPCMon.root
-6768 317591 143 166 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv8800_RPCMon.root
-6768 317591 190 210 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9000_RPCMon.root
-6768 317591 216 236 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9100_RPCMon.root
-6768 317591 242 262 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9200_RPCMon.root
-6768 317591 269 289 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9300_RPCMon.root
-6768 317591 295 315 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9400_RPCMon.root
-6768 317591 323 335 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9500_RPCMon.root
-6770 317626 308 328 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9600_RPCMon.root
-6770 317626 367 387 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9700_RPCMon.root
-6770 317626 397 417 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April/AnalyzeEfficiency_hv9800_RPCMon.root
+6768 317591 64  84  /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv86.root
+6768 317591 87  107 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv88.root
+6768 317591 120 140 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv86.root ## Could be wrong?
+6768 317591 143 166 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv88.root ## Could be wrong?
+6768 317591 190 210 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv90.root
+6768 317591 216 236 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv91.root
+6768 317591 242 262 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv92.root
+6768 317591 269 289 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv93.root
+6768 317591 295 315 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv94.root
+6768 317591 323 335 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv95.root
+6770 317626 308 328 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv96.root
+6770 317626 367 387 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv97.root
+6770 317626 397 417 /store/group/dpg_rpc/comm_rpc/Run-II/data2018/HVscan_April_Corrected/secondStep/AnalyzeEfficiency_RPCMon_hv98.root
+
+## Fill Run LumiSectionStart LumiSectionEnd File
+6245 303948 82  126 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p90.root
+6245 303948 132 173 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p91.root
+6245 303948 178 210 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p92.root
+6245 303948 214 245 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p93.root
+6245 303948 249 279 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p94.root
+6245 303948 286 317 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p95.root
+6245 303948 321 351 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p96.root
+6245 303948 356 386 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p97.root
+6245 303948 390 420 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017September_selPt7_chi8/AnalyzeEfficiency_HVScan2017_Sept_p9771.root
+
+## Fill Run LumiSectionStart LumiSectionEnd File
+#5730 295602  16  28 ## Not use it 100% dead time
+5730 295603 1   29  /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p86.root
+5730 295603 32  57  /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p88.root
+5730 295603 62  72  /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p90.root
+5730 295603 6   20  /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p90.root
+5730 295605 25  44  /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p91.root
+5730 295605 48  69  /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p92.root
+5730 295605 72  91  /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p93.root
+5730 295605 95  115 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p94.root
+5730 295605 121 140 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p95.root
+5730 295605 145 165 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p96.root
+5730 295605 169 188 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p97.root
+5730 295605 195 215 /store/group/dpg_rpc/comm_rpc/Run-II/data2017/HVscan_Offline/HVScan_2017May_selPt7_chi8/AnalyzeEfficiency_HVScan2017_May_p98.root
+
 ## Fill Run LumiSectionStart LumiSectionEnd File
 4895 272818 360 385 /store/group/dpg_rpc/comm_rpc/Run-II/data2016/HVScan_May9/ForHVscanAna/AnalyzeEfficiency_272818_RPCMon_p86.root
 4895 272818 395 428 /store/group/dpg_rpc/comm_rpc/Run-II/data2016/HVScan_May9/ForHVscanAna/AnalyzeEfficiency_272818_RPCMon_p88.root

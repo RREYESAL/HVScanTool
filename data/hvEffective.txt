@@ -1,4 +1,5 @@
 # HV scan settings
+
 ## From https://twiki.cern.ch/twiki/bin/view/CMS/RPCHvscanA2018
 # Fill Run LumiSectionStart LumiSectionEnd RollNamePattern HVEff[V] HVSet[V] Pressure[mbar]
 6768 317591 64  84  RE-2* 8600 8569 961.5
@@ -16,6 +17,35 @@
 6770 317626 308 328 * 9600 9567 961.7 
 6770 317626 367 387 * 9700 9667 961.7
 6770 317626 397 417 * 9800 9767 961.7
+
+## From https://twiki.cern.ch/twiki/bin/view/CMS/RPCHvscanb2017
+# Fill Run LumiSectionStart LumiSectionEnd RollNamePattern HVEff[V] HVSet[V] Pressure[mbar]
+6245 303948 82  126 * 9000 9026 967.83
+6245 303948 132 173 * 9100 9125 967.69
+6245 303948 178 210 * 9200 9226 967.69
+6245 303948 214 245 * 9300 9324 967.54
+6245 303948 249 279 * 9400 9425 967.54
+6245 303948 286 317 * 9500 9526 967.69 
+6245 303948 321 351 * 9600 9625 967.54 
+6245 303948 356 386 * 9700 9728 967.83
+6245 303948 390 420 * 9771 9800 967.83
+
+## From https://twiki.cern.ch/twiki/bin/view/CMS/RPCHvscan2017
+# Fill Run LumiSectionStart LumiSectionEnd RollNamePattern HVEff[V] HVSet[V] Pressure[mbar]
+#5730 295602  16  28  * 8600 8597 964.7 ## Not use it 100% dead time
+5730  295603  1   29  * 8600 8597 964.7 
+5730  295603  32  57  * 8800 8797 964.7 
+5730  295603  62  72  * 9000 8997 964.7 
+5730  295605  6   20  * 9000 8997 964.7 
+5730  295605  25  44  * 9100 9097 964.7 
+5730  295605  48  69  * 9200 9197 964.7 
+5730  295605  72  91  * 9300 9297 964.7 
+5730  295605  95  115 * 9400 9397 964.7 
+5730  295605  121 140 * 9500 9497 964.7 
+5730  295605  145 165 * 9600 9597 964.7 
+5730  295605  169 188 * 9700 9694 964.4 
+5730  295605  195 215 * 9800 9794 964.4 
+
 ## From https://twiki.cern.ch/twiki/bin/viewauth/CMS/RPCHvscan2016
 # Fill Run LumiSectionStart LumiSectionEnd RollNamePattern HVEff[V] HVSet[V] Pressure[mbar]
 4895 272818 360 385 * 8600 8517 955.7
